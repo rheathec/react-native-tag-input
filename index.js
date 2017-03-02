@@ -248,17 +248,28 @@ class TagInput extends Component {
 
 
   scrollToBottom = (animated: boolean = true) => {
-    if (this.contentHeight > this.scrollViewHeight) {
+
+    if(this.props.horizontal){
       this.refs.scrollView.scrollTo({
-        y: this.contentHeight - this.scrollViewHeight,
-        animated,
-      });
+        x: this.contentWidth - this.scrollViewWidth -( this.scrollViewWidth *0.5),
+        animated});
+
+    }else {
+      if (this.contentHeight > this.scrollViewHeight) {
+        this.refs.scrollView.scrollTo({
+          y: this.contentHeight - this.scrollViewHeight,
+          animated,
+        });
+      }
     }
+
   };
 
   render() {
     const { text, inputWidth, lines } = this.state;
-    const { value, inputColor } = this.props;
+    const { value, inputColor, lineHeight, textInputHeight, horizontal} = this.props;
+    const lHeight = lineHeight ? lineHeight : 40;
+    const tInputHeight = textInputHeight ? textInputHeight : 10;
 
     const defaultInputProps = {
       autoCapitalize: 'none',
@@ -271,7 +282,7 @@ class TagInput extends Component {
 
     const inputProps = { ...defaultInputProps, ...this.props.inputProps };
 
-    const wrapperHeight = (lines - 1) * 40 + 36;
+    const wrapperHeight = horizontal ? lHeight : (lines - 1) * 40 + lHeight;
 
     const width = inputWidth ? inputWidth : 400;
 
@@ -286,9 +297,12 @@ class TagInput extends Component {
           onLayout={this.measureWrapper}>
           <ScrollView
             ref='scrollView'
+            horizontal={horizontal}
             style={styles.tagInputContainerScroll}
-            onContentSizeChange={(w, h) => this.contentHeight = h}
-            onLayout={ev => this.scrollViewHeight = ev.nativeEvent.layout.height}
+            onContentSizeChange={(w, h) => {this.contentWidth = w; this.contentHeight = h}}
+            onLayout={ev => {this.scrollViewHeight = ev.nativeEvent.layout.height;
+                              this.scrollViewWidth = ev.nativeEvent.layout.width; }
+            }
           >
             <View style={styles.tagInputContainer}>
               {value.map((tag, index) => this._renderTag(tag, index))}
@@ -300,6 +314,7 @@ class TagInput extends Component {
                   value={text}
                   style={[styles.textInput, {
                   width: width,
+                  minHeight: tInputHeight,
                   color: inputColor,
                 }]}
                   onBlur={this.onBlur}
@@ -338,9 +353,13 @@ const styles = StyleSheet.create({
   textInput: {
     height: 36,
     fontSize: 16,
-    flex: .6,
-    marginBottom: 6,
-    padding: 0,
+    flex: .4,
+    justifyContent: 'center',
+    marginTop: 6,
+    marginRight: 3,
+    padding: 8,
+    height: 24,
+    borderRadius: 2,
 
   },
   textInputContainer: {
