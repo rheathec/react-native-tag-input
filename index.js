@@ -199,7 +199,7 @@ class TagInput extends Component {
   };
 
   focus = () => {
-    if (this.refs.tagInput)
+    if (!this.props.hideInput && this.refs.tagInput)
       this.refs.tagInput.focus();
   };
 
@@ -212,8 +212,9 @@ class TagInput extends Component {
 
   removeIndex = (index: number) => {
     const tags = _.clone(this.props.value);
+    const removed = tags[index];
     tags.splice(index, 1);
-    this.props.onChange(tags);
+    this.props.onChange(tags, removed);
     this.focus();
   };
 
@@ -239,8 +240,13 @@ class TagInput extends Component {
         style={[styles.tag, { backgroundColor: tagColor }, this.props.tagContainerStyle]}
         onPress={() => this.removeIndex(index)}>
         <Text style={[styles.tagText, { color: tagTextColor }, this.props.tagTextStyle]}>
-          {this._getLabelValue(tag)}&nbsp;&times;
+          {this._getLabelValue(tag)}
         </Text>
+        {this.props.tagCloseIconStyle &&
+        <View style={this.props.tagCloseIconStyle}>
+          <Text style={this.props.tagCloseTextStyle}>x</Text>
+        </View>
+        }
       </TouchableOpacity>
     );
   };
@@ -267,7 +273,7 @@ class TagInput extends Component {
 
   render() {
     const { text, inputWidth, lines } = this.state;
-    const { value, inputColor, lineHeight, textInputHeight, horizontal} = this.props;
+    const { value, inputColor, lineHeight, textInputHeight, horizontal, hideInput, addTagButton} = this.props;
     const lHeight = lineHeight ? lineHeight : 40;
     const tInputHeight = textInputHeight ? textInputHeight : 10;
 
@@ -288,7 +294,7 @@ class TagInput extends Component {
 
     return (
       <TouchableWithoutFeedback
-        onPress={() => this.refs.tagInput.focus()}
+        onPress={() => !hideInput && this.refs.tagInput.focus()}
         onLayout={this.measureWrapper}
         style={[styles.container]}>
         <View
@@ -298,6 +304,8 @@ class TagInput extends Component {
           <ScrollView
             ref='scrollView'
             horizontal={horizontal}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
             style={styles.tagInputContainerScroll}
             onContentSizeChange={(w, h) => {this.contentWidth = w; this.contentHeight = h}}
             onLayout={ev => {this.scrollViewHeight = ev.nativeEvent.layout.height;
@@ -305,7 +313,10 @@ class TagInput extends Component {
             }
           >
             <View style={styles.tagInputContainer}>
+              {addTagButton && addTagButton}
               {value.map((tag, index) => this._renderTag(tag, index))}
+
+              {!hideInput &&
               <View style={[styles.textInputContainer, { width: this.state.inputWidth }]}>
                 <TextInput
                   ref="tagInput"
@@ -323,6 +334,8 @@ class TagInput extends Component {
                   {...inputProps}
                 />
               </View>
+              }
+
             </View>
           </ScrollView>
         </View>
