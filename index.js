@@ -231,16 +231,23 @@ class TagInput extends Component {
   };
 
   _renderTag = (tag, index) => {
-    const { tagColor, tagTextColor } = this.props;
+    const { tagColor, tagTextColor, renderTag} = this.props;
+
+    const onPress = () => this.removeIndex(index);
+    const value = this._getLabelValue(tag);
+
+    if(renderTag){
+      return renderTag({onPress, index, value});
+    }
 
     return (
       <TouchableOpacity
         key={index}
         ref={'tag' + index}
         style={[styles.tag, { backgroundColor: tagColor }, this.props.tagContainerStyle]}
-        onPress={() => this.removeIndex(index)}>
+        onPress={onPress}>
         <Text style={[styles.tagText, { color: tagTextColor }, this.props.tagTextStyle]}>
-          {this._getLabelValue(tag)}
+          {value}
         </Text>
         {this.props.tagCloseIconStyle &&
         <View style={this.props.tagCloseIconStyle}>
