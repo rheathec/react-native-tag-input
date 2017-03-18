@@ -262,6 +262,11 @@ class TagInput extends Component {
 
   scrollToBottom = (animated: boolean = true) => {
 
+    if(this.props.hideInput && this.props.horizontal){
+         this.refs.scrollView.scrollTo({x: 0, animated});
+         return;
+       }
+
     if(this.props.horizontal){
       this.refs.scrollView.scrollTo({
         x: this.contentWidth - this.scrollViewWidth -( this.scrollViewWidth *0.5),
@@ -280,7 +285,7 @@ class TagInput extends Component {
 
   render() {
     const { text, inputWidth, lines } = this.state;
-    const { value, inputColor, lineHeight, textInputHeight, horizontal, hideInput, addTagButton} = this.props;
+    const { value, inputColor, lineHeight, textInputHeight, horizontal, hideInput, addTagButton, scrollViewStyle} = this.props;
     const lHeight = lineHeight ? lineHeight : 40;
     const tInputHeight = textInputHeight ? textInputHeight : 10;
 
@@ -313,7 +318,7 @@ class TagInput extends Component {
             horizontal={horizontal}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
-            style={styles.tagInputContainerScroll}
+            style={[styles.tagInputContainerScroll, scrollViewStyle]}
             onContentSizeChange={(w, h) => {this.contentWidth = w; this.contentHeight = h}}
             onLayout={ev => {this.scrollViewHeight = ev.nativeEvent.layout.height;
                               this.scrollViewWidth = ev.nativeEvent.layout.width; }
