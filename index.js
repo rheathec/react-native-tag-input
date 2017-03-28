@@ -161,6 +161,12 @@ class TagInput extends Component {
       return;
 
     const text = event.nativeEvent.text;
+
+    if (text === '') {
+      this.setState({ text: text + '\xa0' });
+      return this.pop();
+    }
+
     this.setState({ text: text });
     const lastTyped = text.charAt(text.length - 1);
 
@@ -184,10 +190,10 @@ class TagInput extends Component {
     const { value } = this.props;
 
     const regex = this.props.regex || DEFAULT_TAG_REGEX;
-    const results = text.match(regex);
+    const results = text.trim().match(regex);
 
     if (results && results.length > 0) {
-      this.setState({ text: '' });
+      this.setState({ text: '\xa0' });
       this.props.onChange([...new Set([...value, ...results])]);
     }
   };
