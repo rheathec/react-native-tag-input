@@ -291,7 +291,7 @@ class TagInput extends Component {
 
   render() {
     const { text, inputWidth, lines } = this.state;
-    const { value, inputColor, lineHeight, textInputHeight, horizontal, hideInput, addTagButton, scrollViewStyle} = this.props;
+    const { value, inputColor, lineHeight, textInputHeight, horizontal, hideInput, addTagButton, scrollViewStyle, textInputContainerStyle } = this.props;
     const lHeight = lineHeight ? lineHeight : 40;
     const tInputHeight = textInputHeight ? textInputHeight : 10;
 
@@ -335,7 +335,7 @@ class TagInput extends Component {
               {value.map((tag, index) => this._renderTag(tag, index))}
 
               {!hideInput &&
-              <View style={[styles.textInputContainer, { width: this.state.inputWidth }]}>
+              <View style={[styles.textInputContainer, { width: this.state.inputWidth }, textInputContainerStyle]}>
                 <TextInput
                   ref="tagInput"
                   blurOnSubmit={false}
